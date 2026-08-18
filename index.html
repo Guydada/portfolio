@@ -14,14 +14,33 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap"
       rel="stylesheet"
     />
-    <link
-      rel="icon"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%23111111'/></svg>"
-    />
+    <meta name="theme-color" content="#f7f6f2" />
+    <link rel="icon" href="data:image/svg+xml," />
     <link data-trunk rel="css" href="style.css" />
     <link data-trunk rel="rust" href="Cargo.toml" data-wasm-opt="z" />
     <link data-trunk rel="copy-file" href="js/mark.js" />
     <script>
+      function paintChrome() {
+        const dark = document.documentElement.dataset.theme === "dark";
+        const bg = dark ? "#111111" : "#f7f6f2";
+        const fg = dark ? "#f4f4f1" : "#111111";
+        const svg =
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">' +
+          '<rect width="32" height="32" fill="' +
+          bg +
+          '"/>' +
+          '<path d="M22.4 10.6A8.4 8.4 0 1 0 22.4 21.4" fill="none" stroke="' +
+          fg +
+          '" stroke-width="2.3" stroke-linecap="square"/>' +
+          '<path d="M15.5 16h8.6" fill="none" stroke="' +
+          fg +
+          '" stroke-width="2.3" stroke-linecap="square"/>' +
+          "</svg>";
+        const icon = document.querySelector("link[rel='icon']");
+        if (icon) icon.href = "data:image/svg+xml," + encodeURIComponent(svg);
+        const theme = document.querySelector("meta[name='theme-color']");
+        if (theme) theme.content = bg;
+      }
       try {
         const stored = localStorage.getItem("theme");
         const dark =
@@ -32,6 +51,11 @@
       } catch (e) {
         document.documentElement.dataset.theme = "light";
       }
+      paintChrome();
+      new MutationObserver(paintChrome).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["data-theme"],
+      });
     </script>
   </head>
   <body>
