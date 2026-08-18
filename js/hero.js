@@ -44,13 +44,18 @@ export function mountHero(canvasEl, heroText, fillColor) {
     return;
   }
 
+  let ready = false;
   observer = new ResizeObserver(() => {
+    if (!ready) {
+      return;
+    }
     layoutHero(false);
   });
   observer.observe(parent);
 
   const start = () => {
     layoutHero(true);
+    ready = true;
   };
 
   if (document.fonts && document.fonts.status !== "loaded") {
@@ -101,7 +106,7 @@ function layoutHero(animate) {
   const cssWidth = Math.max(1, parent.clientWidth);
   const nextSize = fontSizeFor(cssWidth);
   const nextFont = `400 ${nextSize}px "Instrument Serif"`;
-  const lineHeight = Math.round(nextSize * 0.92);
+  const lineHeight = Math.round(nextSize * 1.12);
 
   if (prepared === null || nextFont !== fontSpec) {
     fontSpec = nextFont;
@@ -146,7 +151,7 @@ function layoutHero(animate) {
     playing = false;
   }
 
-  sizeCanvas(cssWidth, Math.max(height, lineHeight));
+  sizeCanvas(cssWidth, Math.max(height, lineHeight) + 8);
   if (playing) {
     tick();
   } else {

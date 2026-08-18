@@ -47,7 +47,7 @@ pub const PROFILE: Profile = Profile {
     phone: "+972 54-439-7380",
     phone_href: "tel:+972544397380",
     linkedin: "https://www.linkedin.com/in/guy-da/",
-    github: "https://github.com/Guyda",
+    github: "https://github.com/Guydada",
     summary: "AI engineer and senior solutions architect serving as a technical lead. I specialize in edge-optimized computer vision, generative AI, and agentic systems — owning delivery from problem framing and prototyping through deployment, optimization, and evaluation.",
 };
 
