@@ -28,25 +28,15 @@ body {
   color: var(--fg);
 }
 
-html {
-  color-scheme: light;
-}
-
-[data-theme="dark"] {
-  color-scheme: dark;
-}
-
 body {
   font-family: Inter, system-ui, sans-serif;
   font-size: 1.02rem;
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
 }
 
 a {
   color: inherit;
-  text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
 }
 
@@ -57,15 +47,14 @@ a:hover {
 .page {
   max-width: var(--max);
   margin: 0 auto;
-  padding: var(--pad);
-  padding-bottom: 5rem;
+  padding: var(--pad) var(--pad) 5rem;
 }
 
 .masthead {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 2.75rem;
+  margin-bottom: 1.5rem;
 }
 
 .kicker,
@@ -74,7 +63,8 @@ a:hover {
 .job-location,
 .skill-blurb,
 .note,
-.meta {
+.meta,
+.section h2 {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
   font-size: 0.72rem;
   letter-spacing: 0.04em;
@@ -89,67 +79,60 @@ a:hover {
   padding: 0;
   color: var(--fg);
   cursor: pointer;
-  text-transform: uppercase;
 }
 
 .theme-toggle:hover {
   opacity: 0.6;
 }
 
-.hero-type {
-  width: 100%;
-  min-height: 4.5rem;
-  margin: 0 0 0.85rem;
-}
-
-.hero-canvas {
+.mark {
   display: block;
   width: 100%;
-  height: auto;
+  height: 6rem;
+  margin: 0 0 1.75rem;
+}
+
+h1 {
+  margin: 0 0 0.4rem;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(2.4rem, 8vw, 3.6rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
 }
 
 .title {
-  margin: 0 0 0.45rem;
+  margin: 0 0 0.4rem;
   font-size: 0.98rem;
   font-weight: 500;
 }
 
 .meta {
-  margin: 0 0 1.75rem;
+  margin: 0 0 1.6rem;
   text-transform: none;
   letter-spacing: 0;
 }
 
-.meta a {
-  text-transform: none;
-}
-
 .summary {
-  margin: 0 0 3rem;
+  margin: 0 0 2.75rem;
   font-size: 1.12rem;
   max-width: 38rem;
 }
 
 .section {
-  margin: 0 0 2.75rem;
-  padding-top: 1.25rem;
+  margin: 0 0 2.5rem;
+  padding-top: 1.2rem;
   border-top: 1px solid var(--line);
 }
 
 .section h2 {
-  margin: 0 0 1.25rem;
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
-  font-size: 0.72rem;
+  margin: 0 0 1.2rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
 }
 
 .jobs,
 .skills,
 .schools,
-.langs,
 .contact,
 .job ul {
   list-style: none;
@@ -159,7 +142,7 @@ a:hover {
 
 .job + .job,
 .schools li + li {
-  margin-top: 1.85rem;
+  margin-top: 1.7rem;
 }
 
 .job-head {
@@ -167,17 +150,6 @@ a:hover {
   justify-content: space-between;
   gap: 1rem;
   align-items: baseline;
-}
-
-@media (max-width: 540px) {
-  .job-head {
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-
-  .job-dates {
-    white-space: normal;
-  }
 }
 
 .job h3,
@@ -195,23 +167,26 @@ a:hover {
   font-size: 0.95rem;
 }
 
-.job-dates {
+.job-dates,
+.job-location,
+.skill-blurb,
+.note {
   text-transform: none;
   letter-spacing: 0;
+}
+
+.job-dates {
   white-space: nowrap;
 }
 
 .job-location {
-  margin: 0.2rem 0 0.65rem;
-  text-transform: none;
-  letter-spacing: 0;
+  margin: 0.2rem 0 0.6rem;
 }
 
 .job ul li {
   position: relative;
   padding-left: 1rem;
   margin: 0.35rem 0;
-  color: var(--fg);
 }
 
 .job ul li::before {
@@ -223,20 +198,11 @@ a:hover {
 
 .skills {
   display: grid;
-  gap: 1.35rem;
-}
-
-@media (min-width: 640px) {
-  .skills {
-    grid-template-columns: 1fr 1fr;
-  }
+  gap: 1.3rem;
 }
 
 .skill-blurb {
-  margin: 0.3rem 0 0.45rem;
-  text-transform: none;
-  letter-spacing: 0;
-  line-height: 1.45;
+  margin: 0.3rem 0 0.4rem;
 }
 
 .skill-items {
@@ -245,22 +211,13 @@ a:hover {
   font-size: 0.92rem;
 }
 
-.langs li,
 .contact li {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
   padding: 0.35rem 0;
   border-bottom: 1px solid var(--line);
 }
 
-.langs li span:last-child,
-.note {
-  color: var(--muted);
-}
-
 .contact {
-  margin-bottom: 0.9rem;
+  margin-bottom: 0.85rem;
 }
 
 .contact a {
@@ -273,21 +230,32 @@ a:hover {
 
 .note {
   margin: 0;
-  text-transform: none;
-  letter-spacing: 0;
   line-height: 1.5;
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+.colophon {
+  margin: 3.5rem 0 0;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--muted);
+}
+
+@media (min-width: 640px) {
+  .skills {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 540px) {
+  .job-head {
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .job-dates {
+    white-space: normal;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -300,24 +268,19 @@ a:hover {
 @media print {
   :root,
   [data-theme="dark"] {
-    --bg: #ffffff;
-    --fg: #000000;
-    --muted: #444444;
-    --line: #cccccc;
+    --bg: #fff;
+    --fg: #000;
+    --muted: #444;
+    --line: #ccc;
   }
 
-  .theme-toggle {
+  .theme-toggle,
+  .mark {
     display: none;
   }
 
   .page {
     padding: 0;
     max-width: none;
-  }
-
-  a[href^="http"]::after {
-    content: " (" attr(href) ")";
-    font-size: 0.75em;
-    color: var(--muted);
   }
 }
