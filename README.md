@@ -2,7 +2,7 @@
 
 A live resume. Rust is kept small on purpose — see [AGENTS.md](AGENTS.md).
 
-The mark at the top is [Pretext](https://github.com/chenglou/pretext) measuring a field of dots, then drawing them as a path. It does not set type.
+The mark at the top is a [Pretext](https://github.com/chenglou/pretext) smoke field: glyphs measured by width and ink, then advected. It does not set type.
 
 ## Run
 

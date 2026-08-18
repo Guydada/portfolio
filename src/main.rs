@@ -234,7 +234,6 @@ fn App() -> impl IntoView {
                     <li><a href=ME.linkedin rel="noreferrer" target="_blank">LinkedIn</a></li>
                     <li><a href=ME.github rel="noreferrer" target="_blank">GitHub</a></li>
                 </ul>
-                <p class="note">"Most of my professional work lives on GitLab."</p>
             </Section>
 
             <p class="colophon">{QUOTE}</p>
