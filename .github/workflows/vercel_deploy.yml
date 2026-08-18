@@ -21,16 +21,14 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: nightly
-          components: clippy, rustfmt
+          targets: wasm32-unknown-unknown
+          components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
-      - name: Setup Rust
+
+      - name: Install Trunk
         run: |
-          rustup target add wasm32-unknown-unknown
-
-      - name: Download and install Trunk binary
-        run: cargo install trunk
-
+          curl -sL https://github.com/trunk-rs/trunk/releases/download/v0.21.14/trunk-x86_64-unknown-linux-gnu.tar.gz | tar -xzf-
+          sudo mv trunk /usr/local/bin/trunk
 
       - name: Build with Trunk
         run: trunk build --release
