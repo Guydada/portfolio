@@ -2,7 +2,7 @@
 
 A live resume. Rust is kept small on purpose — see [AGENTS.md](AGENTS.md).
 
-The mark at the top is a [Pretext](https://github.com/chenglou/pretext) sea: glyphs measured by width and ink, then laid on rolling waves.
+The mark at the top is three traveling swells. [Pretext](https://github.com/chenglou/pretext) spaces the beads on each line.
 
 ## Run
 

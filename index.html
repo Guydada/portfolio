@@ -15,11 +15,12 @@
       rel="stylesheet"
     />
     <meta name="theme-color" content="#f7f6f2" />
-    <link rel="icon" href="data:image/svg+xml," />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml," />
     <link data-trunk rel="css" href="style.css" />
     <link data-trunk rel="rust" href="Cargo.toml" data-wasm-opt="z" />
     <link data-trunk rel="copy-file" href="js/mark.js" />
     <script>
+      let iconUrl = "";
       function paintChrome() {
         const dark = document.documentElement.dataset.theme === "dark";
         const bg = dark ? "#111111" : "#f7f6f2";
@@ -36,11 +37,20 @@
           fg +
           '" stroke-width="2.3" stroke-linecap="square"/>' +
           "</svg>";
-        const icon = document.querySelector("link[rel='icon']");
-        if (icon) icon.href = "data:image/svg+xml," + encodeURIComponent(svg);
+        if (iconUrl) URL.revokeObjectURL(iconUrl);
+        iconUrl = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+        document
+          .querySelectorAll("link[rel='icon'], link[rel='shortcut icon']")
+          .forEach((node) => node.remove());
+        const link = document.createElement("link");
+        link.rel = "icon";
+        link.type = "image/svg+xml";
+        link.href = iconUrl;
+        document.head.appendChild(link);
         const theme = document.querySelector("meta[name='theme-color']");
         if (theme) theme.content = bg;
       }
+      window.paintChrome = paintChrome;
       try {
         const stored = localStorage.getItem("theme");
         const dark =
@@ -55,6 +65,12 @@
       new MutationObserver(paintChrome).observe(document.documentElement, {
         attributes: true,
         attributeFilter: ["data-theme"],
+      });
+      document.addEventListener("click", (event) => {
+        if (event.target.closest && event.target.closest(".theme-toggle")) {
+          setTimeout(paintChrome, 0);
+          setTimeout(paintChrome, 80);
+        }
       });
     </script>
   </head>

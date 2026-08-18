@@ -1,74 +1,24 @@
 /**
- * Sea mark. Pretext measures a glyph palette; density follows rolling waves.
+ * Sea mark: three traveling swells. Pretext measures the bead spacing.
  */
 import { prepareWithSegments } from "https://cdn.jsdelivr.net/npm/@chenglou/pretext@0.0.8/+esm";
 
-const SIZE = 13;
-const LEAD = 15;
-const FACE = '"Instrument Serif", Georgia, serif';
-const INK = "~-_=.,:;+*=#";
+const FONT = '400 13px "Instrument Serif", Georgia, serif';
 const LAYERS = [
-  { mid: 0.24, amp: 0.09, k: 1.1, w: 0.82, thick: 0.042 },
-  { mid: 0.5, amp: 0.11, k: 1.75, w: -1.05, thick: 0.05 },
-  { mid: 0.76, amp: 0.08, k: 0.82, w: 0.46, thick: 0.04 },
+  { mid: 0.3, amp: 0.1, k: 1.05, w: 0.65, alpha: 0.28, line: 1 },
+  { mid: 0.5, amp: 0.13, k: 1.55, w: -0.9, alpha: 0.55, line: 1.2 },
+  { mid: 0.7, amp: 0.1, k: 0.88, w: 0.48, alpha: 1, line: 1.45 },
 ];
 const reduced = () =>
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
 
-const probe = document.createElement("canvas");
-probe.width = probe.height = 24;
-const pctx = probe.getContext("2d", { willReadFrequently: true });
-
-function brightness(ch, font) {
-  pctx.clearRect(0, 0, 24, 24);
-  pctx.font = font;
-  pctx.fillStyle = "#fff";
-  pctx.textBaseline = "middle";
-  pctx.fillText(ch, 1, 12);
-  const data = pctx.getImageData(0, 0, 24, 24).data;
-  let sum = 0;
-  for (let i = 3; i < data.length; i += 4) sum += data[i];
-  return sum / (255 * 576);
-}
-
-function palette() {
-  const out = [];
-  for (const italic of [false, true]) {
-    for (const weight of [400, 700]) {
-      const font = `${italic ? "italic " : ""}${weight} ${SIZE}px ${FACE}`;
-      for (const ch of INK) {
-        const prepared = prepareWithSegments(ch, font);
-        const width = prepared.widths[0] ?? 0;
-        if (width <= 0) continue;
-        out.push({ ch, font, width, b: brightness(ch, font) });
-      }
-    }
-  }
-  const max = Math.max(...out.map((g) => g.b), 1e-6);
-  for (const g of out) g.b /= max;
-  out.sort((a, b) => a.b - b.b);
-  return out;
-}
-
-function pick(glyphs, target) {
-  let lo = 0;
-  let hi = glyphs.length - 1;
-  while (lo < hi) {
-    const mid = (lo + hi) >> 1;
-    if (glyphs[mid].b < target) lo = mid + 1;
-    else hi = mid;
-  }
-  return glyphs[lo];
-}
-
 let canvas;
 let ctx;
-let glyphs = [];
-let cols = 0;
-let rows = 0;
-let cellW = 8;
+let bead = { ch: "·", font: FONT, width: 8 };
 let pointer = null;
 let raf = 0;
+let cssW = 0;
+let cssH = 0;
 
 function color() {
   return (
@@ -79,7 +29,10 @@ function color() {
 
 function sizeCanvas() {
   const w = canvas.parentElement.clientWidth;
-  const h = 188;
+  const h = 148;
+  if (w === cssW && h === cssH && canvas.width) return { w, h };
+  cssW = w;
+  cssH = h;
   const dpr = window.devicePixelRatio || 1;
   canvas.style.width = `${w}px`;
   canvas.style.height = `${h}px`;
@@ -89,63 +42,49 @@ function sizeCanvas() {
   return { w, h };
 }
 
-function reset() {
-  const { w, h } = sizeCanvas();
-  const avg = glyphs.reduce((s, g) => s + g.width, 0) / glyphs.length;
-  cols = Math.max(24, Math.min(110, Math.floor(w / avg)));
-  rows = Math.max(8, Math.min(18, Math.floor(h / LEAD)));
-  cellW = w / cols;
-}
-
-function swell(x, t, layer) {
-  return (
-    Math.sin(x * Math.PI * 2 * layer.k + t * layer.w) * layer.amp +
-    Math.sin(x * Math.PI * 2 * layer.k * 2.2 + t * layer.w * 0.35) * layer.amp * 0.28
-  );
-}
-
-function ink(x, y, t) {
-  let v = 0;
-  for (const layer of LAYERS) {
-    let wy = layer.mid + swell(x, t, layer);
-    if (pointer) {
-      const d = Math.hypot(x - pointer.x, (y - pointer.y) * 0.55);
-      wy += Math.sin(d * 24 - t * 5.5) * Math.exp(-d * 6.5) * 0.09;
-    }
-    const dist = y - wy;
-    const crest = Math.exp((-dist * dist) / (2 * layer.thick * layer.thick));
-    const body =
-      dist > 0
-        ? Math.exp((-dist * dist) / (2 * (layer.thick * 2.6) ** 2)) * 0.38
-        : 0;
-    v = Math.max(v, crest + body);
+function yAt(x, w, h, t, layer) {
+  const nx = x / w;
+  let y =
+    layer.mid * h +
+    Math.sin(nx * Math.PI * 2 * layer.k + t * layer.w) * layer.amp * h +
+    Math.sin(nx * Math.PI * 2 * layer.k * 2.05 + t * layer.w * 0.38) *
+      layer.amp *
+      h *
+      0.22;
+  if (pointer) {
+    const d = Math.hypot(nx - pointer.x, y / h - pointer.y);
+    y += Math.sin(d * 16 - t * 6) * Math.exp(-d * 7) * 20;
   }
-  return Math.min(1, v);
+  return y;
 }
 
 function draw(t) {
-  const w = canvas.clientWidth;
-  const h = canvas.clientHeight;
+  const { w, h } = sizeCanvas();
   ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = color();
-  ctx.textBaseline = "top";
-  const top = (h - rows * LEAD) / 2;
-  for (let r = 0; r < rows; r += 1) {
-    let x = 0;
-    const y = top + r * LEAD;
-    const ny = (r + 0.5) / rows;
-    for (let c = 0; c < cols; c += 1) {
-      const nx = (c + 0.5) / cols;
-      const b = ink(nx, ny, t);
-      if (b < 0.05) {
-        x += cellW;
-        continue;
-      }
-      const g = pick(glyphs, b);
-      ctx.globalAlpha = Math.min(1, 0.22 + b * 0.82);
-      ctx.font = g.font;
-      ctx.fillText(g.ch, x, y);
-      x += g.width;
+  const fg = color();
+  ctx.strokeStyle = fg;
+  ctx.fillStyle = fg;
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "center";
+  ctx.font = bead.font;
+
+  for (const layer of LAYERS) {
+    ctx.globalAlpha = layer.alpha;
+    ctx.lineWidth = layer.line;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 2) {
+      const y = yAt(x, w, h, t, layer);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    const gap = bead.width + 7;
+    ctx.globalAlpha = Math.min(1, layer.alpha + 0.15);
+    for (let x = gap / 2; x < w; x += gap) {
+      ctx.fillText(bead.ch, x, yAt(x, w, h, t, layer));
     }
   }
   ctx.globalAlpha = 1;
@@ -162,13 +101,16 @@ function mount(el) {
   canvas = el;
   ctx = el.getContext("2d");
   if (!ctx) return;
-  glyphs = palette();
-  reset();
-  new ResizeObserver(() => reset()).observe(el.parentElement);
-  new MutationObserver(() => draw(performance.now() / 1000)).observe(
-    document.documentElement,
-    { attributes: true, attributeFilter: ["data-theme"] }
-  );
+  const prepared = prepareWithSegments("·", FONT);
+  bead = { ch: "·", font: FONT, width: prepared.widths[0] || 8 };
+  new ResizeObserver(() => draw(performance.now() / 1000)).observe(el.parentElement);
+  new MutationObserver(() => {
+    draw(performance.now() / 1000);
+    window.paintChrome?.();
+  }).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
   el.addEventListener("pointermove", (ev) => {
     const box = el.getBoundingClientRect();
     pointer = {
