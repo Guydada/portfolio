@@ -45,12 +45,17 @@ jobs:
         run: |
           test -f dist/index.html
           test -f dist/mark.js
+          test -f dist/og.png
           if grep -q 'data-trunk' dist/index.html; then
             echo "dist/index.html still has data-trunk — refusing to ship the source page"
             exit 1
           fi
           if ! grep -q '\.wasm' dist/index.html; then
             echo "dist/index.html has no wasm — refusing to ship"
+            exit 1
+          fi
+          if ! grep -q 'og:image' dist/index.html; then
+            echo "dist/index.html has no og:image — refusing to ship"
             exit 1
           fi
 
