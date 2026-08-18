@@ -27,7 +27,7 @@ index.html       Trunk entry, theme boot, G favicon
 
 That is the whole site. Theme is `html[data-theme]`, set from localStorage or `prefers-color-scheme` before paint. The G in the tab bar is rebuilt as a blob URL when the theme flips — swapping a data-URI `href` in place does not stick.
 
-Push to `main` on GitHub deploys to Vercel (`guyda.dev`).
+Push to `main` on GitHub deploys to Vercel (`guyda.dev`). This repo stays on `main` only — no leftover feature branches.
 
 ## What we learned
 

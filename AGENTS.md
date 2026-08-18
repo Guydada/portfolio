@@ -46,6 +46,8 @@ Rebuild: paint SVG → blob URL → **remove** every icon `<link>` → append a 
 
 ## Ship
 
+Work only on `main`. Commit and push there. Do not keep feature branches — delete them after they land.
+
 Push `main` on GitHub (`Guydada/portfolio`). `.github/workflows/vercel_deploy.yml` Trunk-builds and `vercel deploy --prod` from `dist/`.
 
 - Live site is **guyda.dev** (Vercel). `guyda.com` is an old Netlify site. Do not point people there.
