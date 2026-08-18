@@ -48,7 +48,7 @@ Rebuild: paint SVG → blob URL → **remove** every icon `<link>` → append a 
 
 Work only on `main`. Commit and push there. Do not keep feature branches — delete them after they land.
 
-Push `main` on GitHub (`Guydada/portfolio`). `.github/workflows/vercel_deploy.yml` Trunk-builds and `vercel deploy --prod` from `dist/`.
+Push `main` on GitHub (`Guydada/portfolio`). `.github/workflows/vercel_deploy.yml` Trunk-builds and deploys **`./dist`**, never the source tree. Markdown-only changes do not ship. Overlapping production deploys cancel so an unbuilt page cannot flash live.
 
 - Live site is **guyda.dev** (Vercel). `guyda.com` is an old Netlify site. Do not point people there.
 - This Cursor Origin remote does not push deploys. GitHub Actions do.

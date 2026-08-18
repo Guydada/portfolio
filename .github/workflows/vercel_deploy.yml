@@ -4,7 +4,15 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - "*.md"
+      - "AGENTS.md"
+      - "README.md"
   workflow_dispatch:
+
+concurrency:
+  group: production-vercel
+  cancel-in-progress: true
 
 env:
   CARGO_TERM_COLOR: always
@@ -33,15 +41,26 @@ jobs:
       - name: Build with Trunk
         run: trunk build --release
 
+      - name: Guard Trunk output
+        run: |
+          test -f dist/index.html
+          test -f dist/mark.js
+          if grep -q 'data-trunk' dist/index.html; then
+            echo "dist/index.html still has data-trunk — refusing to ship the source page"
+            exit 1
+          fi
+          if ! grep -q '\.wasm' dist/index.html; then
+            echo "dist/index.html has no wasm — refusing to ship"
+            exit 1
+          fi
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Deploy to Vercel & Display URL
+      - name: Deploy Trunk dist
         id: deployment
-        working-directory: ./dist
         run: |
-          vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} >> $GITHUB_STEP_SUMMARY
-          echo $GITHUB_STEP_SUMMARY
+          vercel deploy ./dist --prod --yes --token=${{ secrets.VERCEL_TOKEN }} >> $GITHUB_STEP_SUMMARY
