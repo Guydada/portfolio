@@ -1,4 +1,8 @@
-"""Paint the 1200x630 JPEG link-preview card: geometric G over three swells."""
+"""Paint a square JPEG link-preview card: geometric G over three swells.
+
+WhatsApp crops the compose thumbnail to a square. A wide 1.91:1 card
+clips the G. This is 1200x1200 with the G in the center.
+"""
 
 from __future__ import annotations
 
@@ -8,18 +12,16 @@ from typing import Final
 
 from PIL import Image, ImageDraw
 
-WIDTH: Final[int] = 1200
-HEIGHT: Final[int] = 630
+SIZE: Final[int] = 1200
 SCALE: Final[int] = 2
 BG: Final[str] = "#f7f6f2"
 FG: Final[tuple[int, int, int]] = (0x11, 0x11, 0x11)
 OUT: Final[Path] = Path(__file__).with_name("og.jpg")
 
-# Same swells as js/mark.js, frozen, inked heavy enough to read at thumbnail size.
 LAYERS: Final[tuple[dict[str, float], ...]] = (
-    {"mid": 0.30, "amp": 0.11, "k": 1.05, "w": 0.65, "alpha": 0.40, "line": 7.0},
-    {"mid": 0.50, "amp": 0.14, "k": 1.55, "w": -0.9, "alpha": 0.70, "line": 9.0},
-    {"mid": 0.70, "amp": 0.11, "k": 0.88, "w": 0.48, "alpha": 1.0, "line": 11.0},
+    {"mid": 0.32, "amp": 0.09, "k": 1.05, "w": 0.65, "alpha": 0.42, "line": 8.0},
+    {"mid": 0.50, "amp": 0.12, "k": 1.55, "w": -0.9, "alpha": 0.72, "line": 11.0},
+    {"mid": 0.68, "amp": 0.09, "k": 0.88, "w": 0.48, "alpha": 1.0, "line": 13.0},
 )
 T: Final[float] = 1.7
 
@@ -46,7 +48,7 @@ def ink(alpha: float) -> tuple[int, int, int, int]:
 
 def draw_waves(draw: ImageDraw.ImageDraw, width: int, height: int) -> None:
     """Stroke the three swells and tick them with beads."""
-    pad_y: float = height * 0.12
+    pad_y: float = height * 0.18
     band_h: float = height - pad_y * 2.0
     px: float = float(SCALE)
     for layer in LAYERS:
@@ -58,8 +60,8 @@ def draw_waves(draw: ImageDraw.ImageDraw, width: int, height: int) -> None:
             pts.append((float(x), pad_y + wave_y(float(x), float(width), band_h, layer)))
             x += step
         draw.line(pts, fill=color, width=max(1, round(layer["line"] * px)), joint="curve")
-        bead_r: float = 3.1 * px
-        gap: float = 20.0 * px
+        bead_r: float = 3.4 * px
+        gap: float = 22.0 * px
         bx: float = gap / 2.0
         bead: tuple[int, int, int, int] = ink(min(1.0, layer["alpha"] + 0.12))
         while bx < width:
@@ -71,10 +73,10 @@ def draw_waves(draw: ImageDraw.ImageDraw, width: int, height: int) -> None:
             bx += gap
 
 
-def draw_g(draw: ImageDraw.ImageDraw, height: int) -> None:
-    """Open ring plus crossbar — same G as the tab icon, scaled up."""
-    scale: float = 14.2 * SCALE
-    ox: float = 108.0 * SCALE
+def draw_g(draw: ImageDraw.ImageDraw, width: int, height: int) -> None:
+    """Open ring plus crossbar, centered for WhatsApp's square thumb."""
+    scale: float = 16.5 * SCALE
+    ox: float = (width - 32.0 * scale) / 2.0
     oy: float = (height - 32.0 * scale) / 2.0
     stroke: int = max(1, round(2.3 * scale))
     cx: float = ox + 16.0 * scale
@@ -99,17 +101,16 @@ def draw_g(draw: ImageDraw.ImageDraw, height: int) -> None:
 
 def main() -> None:
     """Write og.jpg next to this script."""
-    w: int = WIDTH * SCALE
-    h: int = HEIGHT * SCALE
-    img: Image.Image = Image.new("RGB", (w, h), BG)
-    overlay: Image.Image = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    side: int = SIZE * SCALE
+    img: Image.Image = Image.new("RGB", (side, side), BG)
+    overlay: Image.Image = Image.new("RGBA", (side, side), (0, 0, 0, 0))
     draw: ImageDraw.ImageDraw = ImageDraw.Draw(overlay)
-    draw_waves(draw, w, h)
-    draw_g(draw, h)
+    draw_waves(draw, side, side)
+    draw_g(draw, side, side)
     img.paste(overlay, mask=overlay)
-    img = img.resize((WIDTH, HEIGHT), Image.Resampling.LANCZOS)
-    img.convert("RGB").save(OUT, "JPEG", quality=88, optimize=True, progressive=True)
-    print(f"wrote {OUT} ({OUT.stat().st_size} bytes)")
+    img = img.resize((SIZE, SIZE), Image.Resampling.LANCZOS)
+    img.convert("RGB").save(OUT, "JPEG", quality=88, optimize=True, progressive=False)
+    print(f"wrote {OUT} {img.size} ({OUT.stat().st_size} bytes)")
 
 
 if __name__ == "__main__":

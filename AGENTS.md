@@ -20,8 +20,8 @@ This repo is a live resume at [guyda.dev](https://guyda.dev). The Rust should be
 | `js/mark.js` | Canvas sea mark. Self-boots. No wasm-bindgen. |
 | `style.css` | Typesetting. Light/dark via `html[data-theme]`. |
 | `index.html` | Trunk, fonts, theme boot, G favicon, link-preview tags |
-| `og.jpg` | WhatsApp / X card. JPEG under 600KB. Rebuild with `python3 og.py`. |
-| `og.py` | Paints `og.png`. Not part of the site runtime. |
+| `og.jpg` | WhatsApp / X card. Square JPEG, G centered. Rebuild with `python3 og.py`. |
+| `og.py` | Paints `og.jpg`. Not part of the site runtime. |
 | `Trunk.toml` | `target = index.html`, `dist = dist` |
 
 Do not re-split into `app.rs` / `content.rs` / `hero.rs`. One file is the point.
@@ -50,9 +50,9 @@ Rebuild: paint SVG → blob URL → **remove** every icon `<link>` → append a 
 
 WhatsApp and X never run the canvas. They read Open Graph tags in the first HTML response and fetch `og.jpg`.
 
-- JPEG, 1200×630, under 600KB. PNG often shows title with no picture on WhatsApp.
-- Absolute `https://guyda.dev/og.jpg`. Tag needs `itemprop="image"`.
-- WhatsApp caches the first scrape of a URL. After changing the card, test with `https://guyda.dev/?v=2` — the same URL will keep the old blank preview.
+- JPEG, **1200×1200**, G in the center. WhatsApp’s compose thumb is a square crop — a wide 1.91:1 card clips the G.
+- Absolute `https://guyda.dev/og.jpg`. Tag needs `itemprop="image"`. Under 600KB.
+- WhatsApp caches the first scrape of each exact URL. `https://guyda.dev` and `https://guyda.dev/?v=2` are different entries. Changing the card does not refresh the old one. Bump `og:image?v=` and scrape at https://developers.facebook.com/tools/debug/ (WhatsApp uses that cache).
 
 ## Ship
 
