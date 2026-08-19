@@ -20,7 +20,7 @@ This repo is a live resume at [guyda.dev](https://guyda.dev). The Rust should be
 | `js/mark.js` | Canvas sea mark. Self-boots. No wasm-bindgen. |
 | `style.css` | Typesetting. Light/dark via `html[data-theme]`. |
 | `index.html` | Trunk, fonts, theme boot, G favicon, link-preview tags |
-| `og.png` | WhatsApp / X card: G over three swells. Rebuild with `python3 og.py`. |
+| `og.jpg` | WhatsApp / X card. JPEG under 600KB. Rebuild with `python3 og.py`. |
 | `og.py` | Paints `og.png`. Not part of the site runtime. |
 | `Trunk.toml` | `target = index.html`, `dist = dist` |
 
@@ -45,6 +45,14 @@ Do not re-split into `app.rs` / `content.rs` / `hero.rs`. One file is the point.
 Browsers cache `link[rel=icon]` by URL. Mutating `href` on a data URI often does nothing.
 
 Rebuild: paint SVG → blob URL → **remove** every icon `<link>` → append a new one. `paintChrome()` in `index.html` already does this. Call it when `data-theme` changes.
+
+## Link previews
+
+WhatsApp and X never run the canvas. They read Open Graph tags in the first HTML response and fetch `og.jpg`.
+
+- JPEG, 1200×630, under 600KB. PNG often shows title with no picture on WhatsApp.
+- Absolute `https://guyda.dev/og.jpg`. Tag needs `itemprop="image"`.
+- WhatsApp caches the first scrape of a URL. After changing the card, test with `https://guyda.dev/?v=2` — the same URL will keep the old blank preview.
 
 ## Ship
 

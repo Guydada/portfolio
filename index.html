@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" prefix="og: https://ogp.me/ns#">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -8,26 +8,29 @@
       name="description"
       content="Live resume of Guy Dahan, senior solutions architect and AI engineer."
     />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://guyda.dev/" />
     <meta property="og:title" content="Guy Dahan — Senior Solutions Architect" />
     <meta
       property="og:description"
-      content="AI engineer and senior solutions architect. Edge-optimized computer vision, generative AI, and agentic systems."
+      content="Live resume of Guy Dahan, senior solutions architect and AI engineer."
     />
-    <meta property="og:image" content="https://guyda.dev/og.png" />
-    <meta property="og:image:type" content="image/png" />
+    <meta property="og:url" content="https://guyda.dev/" />
+    <meta property="og:image" itemprop="image" content="https://guyda.dev/og.jpg" />
+    <meta property="og:image:secure_url" content="https://guyda.dev/og.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="A geometric G over three sea swells." />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Guy Dahan" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Guy Dahan — Senior Solutions Architect" />
     <meta
       name="twitter:description"
-      content="AI engineer and senior solutions architect. Edge-optimized computer vision, generative AI, and agentic systems."
+      content="Live resume of Guy Dahan, senior solutions architect and AI engineer."
     />
-    <meta name="twitter:image" content="https://guyda.dev/og.png" />
+    <meta name="twitter:image" content="https://guyda.dev/og.jpg" />
     <meta name="twitter:image:alt" content="A geometric G over three sea swells." />
+    <link rel="image_src" href="https://guyda.dev/og.jpg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -39,7 +42,9 @@
     <link data-trunk rel="css" href="style.css" />
     <link data-trunk rel="rust" href="Cargo.toml" data-wasm-opt="z" />
     <link data-trunk rel="copy-file" href="js/mark.js" />
-    <link data-trunk rel="copy-file" href="og.png" />
+    <link data-trunk rel="copy-file" href="og.jpg" />
+    <link data-trunk rel="copy-file" href="robots.txt" />
+    <link data-trunk rel="copy-file" href="vercel.json" />
     <script>
       let iconUrl = "";
       function paintChrome() {

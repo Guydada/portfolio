@@ -23,7 +23,7 @@ src/main.rs      resume + Leptos app (one file)
 js/mark.js       sea mark (canvas, Pretext as a ruler)
 style.css        black / white typesetting
 index.html       Trunk entry, theme boot, G favicon
-og.png           WhatsApp / X preview (G over three swells)
+og.jpg           WhatsApp / X preview (G over three swells)
 ```
 
 That is the whole site. Theme is `html[data-theme]`, set from localStorage or `prefers-color-scheme` before paint. The G in the tab bar is rebuilt as a blob URL when the theme flips — swapping a data-URI `href` in place does not stick.

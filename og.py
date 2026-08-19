@@ -1,4 +1,4 @@
-"""Paint the 1200x630 link-preview card: geometric G over three swells."""
+"""Paint the 1200x630 JPEG link-preview card: geometric G over three swells."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ HEIGHT: Final[int] = 630
 SCALE: Final[int] = 2
 BG: Final[str] = "#f7f6f2"
 FG: Final[tuple[int, int, int]] = (0x11, 0x11, 0x11)
-OUT: Final[Path] = Path(__file__).with_name("og.png")
+OUT: Final[Path] = Path(__file__).with_name("og.jpg")
 
 # Same swells as js/mark.js, frozen, inked heavy enough to read at thumbnail size.
 LAYERS: Final[tuple[dict[str, float], ...]] = (
@@ -98,7 +98,7 @@ def draw_g(draw: ImageDraw.ImageDraw, height: int) -> None:
 
 
 def main() -> None:
-    """Write og.png next to this script."""
+    """Write og.jpg next to this script."""
     w: int = WIDTH * SCALE
     h: int = HEIGHT * SCALE
     img: Image.Image = Image.new("RGB", (w, h), BG)
@@ -108,7 +108,7 @@ def main() -> None:
     draw_g(draw, h)
     img.paste(overlay, mask=overlay)
     img = img.resize((WIDTH, HEIGHT), Image.Resampling.LANCZOS)
-    img.save(OUT, "PNG", optimize=True)
+    img.convert("RGB").save(OUT, "JPEG", quality=88, optimize=True, progressive=True)
     print(f"wrote {OUT} ({OUT.stat().st_size} bytes)")
 
 

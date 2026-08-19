@@ -45,7 +45,8 @@ jobs:
         run: |
           test -f dist/index.html
           test -f dist/mark.js
-          test -f dist/og.png
+          test -f dist/og.jpg
+          test -f dist/robots.txt
           if grep -q 'data-trunk' dist/index.html; then
             echo "dist/index.html still has data-trunk — refusing to ship the source page"
             exit 1
